@@ -1,6 +1,7 @@
 "use strict";
 
-const gameBoard = () => { 
+const gameboardModule= () => { 
+    gameboard = []
 
 }
 
@@ -27,6 +28,8 @@ const gridCell = document.querySelectorAll(".grid-cell");
 
 gridCell.forEach((grid)=>{
     grid.addEventListener("click", function(e){
-        e.target.innerText = wata.getMarker();
+        if(e.target.innerText != "O"){
+            e.target.innerText = wata.getMarker();
+        }
     })
 })
