@@ -1,35 +1,54 @@
-"use strict";
+const X_CLASS = "x";
+const CIRCLE_CLASS = "circle";
+const cells = document.querySelectorAll(".grid-cell");
+const display = document.querySelector("#display");
+const gameBoard = document.querySelector(".gameboard");
+const restartButton = document.querySelector("#restart-button");
+let circleTurn;
 
-const gameboardModule= () => { 
-    gameboard = []
 
+startGame();
+
+function startGame(){
+    circleTurn = false;
+    cells.forEach((cell)=>{
+        cell.classList.remove(X_CLASS);
+        cell.classList.remove(CIRCLE_CLASS);
+        cell.addEventListener("click", handleClick, {once : true});
+    });
+    setBoardHoverClass();
 }
 
-const Player = (name, marker) => {
-    return{
-        name,
-        marker,
-        turn: () => {
-            return "It is "+ name + "'s turn"
-        },
-        
-        getMarker: () =>{
-            return marker
-        }
+function handleClick(e){
+    const cell = e.target;
+    const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS;
+    placeMark(cell, currentClass);
+    //checkwin
+    //check draw
+    swapTurn();
+    setBoardHoverClass();
+    
+}
+
+function placeMark(cell, currentClass){
+    cell.classList.add(currentClass);
+}
+
+function swapTurn(){
+    circleTurn = !circleTurn;
+}
+
+function setBoardHoverClass(){
+    gameBoard.classList.remove(X_CLASS);
+    gameBoard.classList.remove(CIRCLE_CLASS);
+    if(circleTurn){
+        gameBoard.classList.add(CIRCLE_CLASS);
+    }else{
+        gameBoard.classList.add(X_CLASS)
     };
 }
 
-const wata = Player("wata", "X")
-const display = document.querySelector("#display");
 
-display.innerText = wata.turn();
 
-const gridCell = document.querySelectorAll(".grid-cell");
+restartButton.addEventListener("click", startGame);
 
-gridCell.forEach((grid)=>{
-    grid.addEventListener("click", function(e){
-        if(e.target.innerText != "O"){
-            e.target.innerText = wata.getMarker();
-        }
-    })
-})
