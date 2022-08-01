@@ -10,6 +10,16 @@ const playerOneInput = document.querySelector("#player-one")
 const playerTwoInput = document.querySelector("#player-two")
 const playerOne = {};
 const playerTwo = {};
+const WINNING_COMBINATIONS = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3 ,6],
+    [1, 4, 7],
+    [2, 5 ,8],
+    [0, 4, 8],
+    [2, 4 ,6]
+]
 let circleTurn;
 
 
@@ -38,12 +48,31 @@ function handleClick(e){
     const cell = e.target;
     const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS;
     placeMark(cell, currentClass);
-    //checkwin
-    //check draw
-    swapTurn();
-    setBoardHoverClass();
-    updateDisplay();
+    if (checkWin(currentClass)) {
+        endGame(false);
+    } else if (isDraw()) {
+        endGame(true);
+    } else {
+        swapTurn();
+        setBoardHoverClass();
+        updateDisplay();
+    }
     
+}
+
+function endGame(draw){
+    if(draw){
+        display.innerText = "It's a Draw!"
+    }else{
+        display.innerText = `${circleTurn ? playerTwo.name : playerOne.name}  Wins!`
+    }
+}
+
+//if every cell has a class , then this function will return true 
+function isDraw(){
+    return [...cells].every(cell => {
+        return cell.classList.contains(X_CLASS) || cell.classList.contains(CIRCLE_CLASS);
+    })
 }
 
 function placeMark(cell, currentClass){
@@ -64,6 +93,15 @@ function setBoardHoverClass(){
     };
 }
 
+function checkWin(currentClass){
+    return WINNING_COMBINATIONS.some(combination => {
+        return combination.every(index => {
+            return cells[index].classList.contains(currentClass)
+        })
+    })
+}
+
+
 function updateDisplay(){
     if(circleTurn){
         display.innerText = playerTwo.name + " is up!"
@@ -76,6 +114,8 @@ restartButton.addEventListener("click", reset);
 
 function  reset() {
     firstRender.classList.add("show");
+    playerOneInput.value="";
+    playerTwoInput.value=""
     cells.forEach((cell)=>{
         cell.classList.remove(X_CLASS);
         cell.classList.remove(CIRCLE_CLASS);
